@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "FB Listing Auto-Filler & Automation (Proxy-Enabled)",
+  "version": "2.1",
+  "description": "Auto-fill Facebook Marketplace listings and automate trailer scraping process with Kansas City proxy support",
+  "permissions": ["storage", "scripting", "activeTab"],
+  "host_permissions": [
+    "https://www.facebook.com/",
+    "https://dealerpro.matrackinc.com/"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://dealerpro.matrackinc.com/rakesh-dealer-pro/dealer.php?page=scraper*"],
+      "js": ["inject.js", "automation.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.facebook.com/marketplace/create/vehicle*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.facebook.com/marketplace/you/selling*"],
+      "js": ["delete-content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

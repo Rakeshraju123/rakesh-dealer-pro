@@ -1,0 +1,13 @@
+.smart-view-table__cell a {
+    color: #0066cc;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.smart-view-table__cell a:hover {
+    color: #004999;
+}
+
+.smart-view-table__cell a:visited {
+    color: #551A8B;
+} 

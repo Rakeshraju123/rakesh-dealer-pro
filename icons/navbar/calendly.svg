@@ -1,0 +1,11 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <!-- Calendar outline -->
+  <rect x="3" y="4" width="18" height="17" rx="2" ry="2" stroke="currentColor" fill="none" stroke-width="2"/>
+  <!-- Binding rings -->
+  <line x1="3" y1="7" x2="21" y2="7" stroke="currentColor" stroke-width="2"/>
+  <line x1="8" y1="1" x2="8" y2="4" stroke="currentColor" stroke-width="2"/>
+  <line x1="16" y1="1" x2="16" y2="4" stroke="currentColor" stroke-width="2"/>
+  <!-- Calendly "C" inside to represent meetings -->
+  <path d="M9 14a3 3 0 0 1 6 0a3 3 0 0 1-6 0m1 0a2 2 0 0 0 4 0a2 2 0 0 0-4 0" fill="none" stroke="currentColor" stroke-width="2"/>
+</svg>

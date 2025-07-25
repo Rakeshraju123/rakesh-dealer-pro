@@ -1,0 +1,411 @@
+<!-- Reports Management Page -->
+<div class="reports-management">
+    <!-- Page Header -->
+    <div class="main-header">
+        <div>
+            <h1 class="header-title">Reports</h1>
+            <p class="header-subtitle">Analytics and business insights</p>
+        </div>
+        <div class="main-header-actions">
+            <button class="btn btn--outlined" onclick="ReportsManagement.exportAllReports()">
+                <div class="icon icon--upload"></div>
+                <span>Export All</span>
+            </button>
+            <button class="btn btn--primary" onclick="ReportsManagement.openCustomReportModal()">
+                <div class="icon icon--chart-bar"></div>
+                <span>Custom Report</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Date Range Filter -->
+    <div class="card">
+        <div class="reports-filter-section">
+            <h3 class="section-title">Report Filters</h3>
+            <div class="reports-filters">
+                <div class="filter-group">
+                    <label for="report-start-date">Start Date</label>
+                    <input type="date" id="report-start-date" class="form-control">
+                </div>
+                <div class="filter-group">
+                    <label for="report-end-date">End Date</label>
+                    <input type="date" id="report-end-date" class="form-control">
+                </div>
+                <div class="filter-group">
+                    <label for="report-period">Quick Select</label>
+                    <select id="report-period" class="btn-select" onchange="ReportsManagement.setDateRange()">
+                        <option value="">Custom Range</option>
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="this-week">This Week</option>
+                        <option value="last-week">Last Week</option>
+                        <option value="this-month">This Month</option>
+                        <option value="last-month">Last Month</option>
+                        <option value="this-quarter">This Quarter</option>
+                        <option value="this-year">This Year</option>
+                    </select>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn btn--primary" onclick="ReportsManagement.applyFilters()">
+                        Apply Filters
+                    </button>
+                    <button class="btn btn--outlined" onclick="ReportsManagement.resetFilters()">
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports Grid -->
+    <div class="reports-grid">
+        <!-- Sales Reports -->
+        <div class="report-card">
+            <div class="report-card-header">
+                <div class="report-card-icon">
+                    <div class="icon icon--payment"></div>
+                </div>
+                <div class="report-card-title">
+                    <h3>Sales Report</h3>
+                    <p>Sales performance and revenue analysis</p>
+                </div>
+            </div>
+            <div class="report-card-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Sales</span>
+                    <span class="stat-value" id="sales-total-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Revenue</span>
+                    <span class="stat-value" id="sales-total-revenue">$0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Avg. Sale</span>
+                    <span class="stat-value" id="sales-avg-value">$0</span>
+                </div>
+            </div>
+            <div class="report-card-actions">
+                <button class="btn btn--text" onclick="ReportsManagement.viewReport('sales')">
+                    <div class="icon icon--eye"></div>
+                    View
+                </button>
+                <button class="btn btn--text" onclick="ReportsManagement.exportReport('sales')">
+                    <div class="icon icon--upload"></div>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Inventory Reports -->
+        <div class="report-card">
+            <div class="report-card-header">
+                <div class="report-card-icon">
+                    <div class="icon icon--contract"></div>
+                </div>
+                <div class="report-card-title">
+                    <h3>Inventory Report</h3>
+                    <p>Stock levels and inventory analysis</p>
+                </div>
+            </div>
+            <div class="report-card-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Items</span>
+                    <span class="stat-value" id="inventory-total-items">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Low Stock</span>
+                    <span class="stat-value" id="inventory-low-stock">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Value</span>
+                    <span class="stat-value" id="inventory-total-value">$0</span>
+                </div>
+            </div>
+            <div class="report-card-actions">
+                <button class="btn btn--text" onclick="ReportsManagement.viewReport('inventory')">
+                    <div class="icon icon--eye"></div>
+                    View
+                </button>
+                <button class="btn btn--text" onclick="ReportsManagement.exportReport('inventory')">
+                    <div class="icon icon--upload"></div>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Customer Reports -->
+        <div class="report-card">
+            <div class="report-card-header">
+                <div class="report-card-icon">
+                    <div class="icon icon--ai-communications"></div>
+                </div>
+                <div class="report-card-title">
+                    <h3>Customer Report</h3>
+                    <p>Customer analytics and behavior</p>
+                </div>
+            </div>
+            <div class="report-card-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Customers</span>
+                    <span class="stat-value" id="customers-total-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Active</span>
+                    <span class="stat-value" id="customers-active-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Avg. Spent</span>
+                    <span class="stat-value" id="customers-avg-spent">$0</span>
+                </div>
+            </div>
+            <div class="report-card-actions">
+                <button class="btn btn--text" onclick="ReportsManagement.viewReport('customers')">
+                    <div class="icon icon--eye"></div>
+                    View
+                </button>
+                <button class="btn btn--text" onclick="ReportsManagement.exportReport('customers')">
+                    <div class="icon icon--upload"></div>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Financial Reports -->
+        <div class="report-card">
+            <div class="report-card-header">
+                <div class="report-card-icon">
+                    <div class="icon icon--card-filled"></div>
+                </div>
+                <div class="report-card-title">
+                    <h3>Financial Report</h3>
+                    <p>Revenue, expenses, and profitability</p>
+                </div>
+            </div>
+            <div class="report-card-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Revenue</span>
+                    <span class="stat-value" id="financial-revenue">$0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Expenses</span>
+                    <span class="stat-value" id="financial-expenses">$0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Profit</span>
+                    <span class="stat-value" id="financial-profit">$0</span>
+                </div>
+            </div>
+            <div class="report-card-actions">
+                <button class="btn btn--text" onclick="ReportsManagement.viewReport('financial')">
+                    <div class="icon icon--eye"></div>
+                    View
+                </button>
+                <button class="btn btn--text" onclick="ReportsManagement.exportReport('financial')">
+                    <div class="icon icon--upload"></div>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Transaction Reports -->
+        <div class="report-card">
+            <div class="report-card-header">
+                <div class="report-card-icon">
+                    <div class="icon icon--payment-fill"></div>
+                </div>
+                <div class="report-card-title">
+                    <h3>Transaction Report</h3>
+                    <p>Payment and transaction analysis</p>
+                </div>
+            </div>
+            <div class="report-card-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Transactions</span>
+                    <span class="stat-value" id="transactions-total-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Amount</span>
+                    <span class="stat-value" id="transactions-total-amount">$0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Avg. Transaction</span>
+                    <span class="stat-value" id="transactions-avg-amount">$0</span>
+                </div>
+            </div>
+            <div class="report-card-actions">
+                <button class="btn btn--text" onclick="ReportsManagement.viewReport('transactions')">
+                    <div class="icon icon--eye"></div>
+                    View
+                </button>
+                <button class="btn btn--text" onclick="ReportsManagement.exportReport('transactions')">
+                    <div class="icon icon--upload"></div>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Performance Reports -->
+        <div class="report-card">
+            <div class="report-card-header">
+                <div class="report-card-icon">
+                    <div class="icon icon--chart-bar"></div>
+                </div>
+                <div class="report-card-title">
+                    <h3>Performance Report</h3>
+                    <p>Business performance metrics</p>
+                </div>
+            </div>
+            <div class="report-card-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Growth Rate</span>
+                    <span class="stat-value" id="performance-growth-rate">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Conversion</span>
+                    <span class="stat-value" id="performance-conversion">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">ROI</span>
+                    <span class="stat-value" id="performance-roi">0%</span>
+                </div>
+            </div>
+            <div class="report-card-actions">
+                <button class="btn btn--text" onclick="ReportsManagement.viewReport('performance')">
+                    <div class="icon icon--eye"></div>
+                    View
+                </button>
+                <button class="btn btn--text" onclick="ReportsManagement.exportReport('performance')">
+                    <div class="icon icon--upload"></div>
+                    Export
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Report Details Modal -->
+<div id="report-details-modal" class="modal-overlay">
+    <div class="modal-container modal-container--large">
+        <div class="modal-header">
+            <h3 id="report-details-title">Report Details</h3>
+            <button class="btn btn--icon" onclick="ReportsManagement.closeReportDetailsModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="report-details-content">
+                <!-- Report details will be populated here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="ReportsManagement.closeReportDetailsModal()">Close</button>
+            <button class="btn btn--outlined" onclick="ReportsManagement.printReport()">
+                <div class="icon icon--chart-bar"></div>
+                Print
+            </button>
+            <button class="btn btn--primary" onclick="ReportsManagement.exportCurrentReport()">
+                <div class="icon icon--upload"></div>
+                Export
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Report Modal -->
+<div id="custom-report-modal" class="modal-overlay">
+    <div class="modal-container modal-container--large">
+        <div class="modal-header">
+            <h3>Create Custom Report</h3>
+            <button class="btn btn--icon" onclick="ReportsManagement.closeCustomReportModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="custom-report-form">
+                <div class="custom-report-grid">
+                    <div class="form-section">
+                        <h4>Report Configuration</h4>
+                        <div class="form-group">
+                            <label for="custom-report-name">Report Name *</label>
+                            <input type="text" id="custom-report-name" required placeholder="Enter report name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="custom-report-type">Report Type *</label>
+                            <select id="custom-report-type" required>
+                                <option value="">Select Type</option>
+                                <option value="sales">Sales Analysis</option>
+                                <option value="inventory">Inventory Analysis</option>
+                                <option value="customer">Customer Analysis</option>
+                                <option value="financial">Financial Analysis</option>
+                                <option value="performance">Performance Analysis</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="custom-report-format">Export Format</label>
+                            <select id="custom-report-format">
+                                <option value="pdf">PDF</option>
+                                <option value="excel">Excel</option>
+                                <option value="csv">CSV</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h4>Date Range</h4>
+                        <div style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="custom-start-date">Start Date *</label>
+                                <input type="date" id="custom-start-date" required>
+                            </div>
+                            
+                            <div class="form-group" style="flex: 1;">
+                                <label for="custom-end-date">End Date *</label>
+                                <input type="date" id="custom-end-date" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Include Metrics</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="include-totals" checked>
+                                    <span>Totals & Summaries</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="include-charts">
+                                    <span>Charts & Graphs</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="include-details">
+                                    <span>Detailed Breakdown</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="include-trends">
+                                    <span>Trend Analysis</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="custom-report-notes">Additional Notes</label>
+                    <textarea id="custom-report-notes" rows="3" placeholder="Any specific requirements or notes..."></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="ReportsManagement.closeCustomReportModal()">Cancel</button>
+            <button class="btn btn--outlined" onclick="ReportsManagement.previewCustomReport()">
+                <div class="icon icon--eye"></div>
+                Preview
+            </button>
+            <button class="btn btn--primary" onclick="ReportsManagement.generateCustomReport()">
+                <div class="icon icon--chart-bar"></div>
+                Generate Report
+            </button>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,165 @@
+<!-- Dealer Dashboard Overview -->
+<div class="dashboard-overview">
+    <!-- Page Header -->
+    <div class="main-header">
+        <div>
+            <h1 class="header-title">Dealer Dashboard</h1>
+            <p class="header-subtitle">Inventory & Payment Management</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Grid Layout -->
+    <div class="dashboard-grid">
+        <!-- Top Row - Quick Stats and Sales Chart -->
+        <div class="dashboard-top-row">
+            <!-- Quick Stats Card -->
+            <div class="card quick-stats-card">
+                <div class="section-header">
+                    <h2 class="section-title">Quick Stats</h2>
+                </div>
+                
+                <div class="quick-stats-content">
+                    <div class="quick-stat-row">
+                        <span class="quick-stat-label">In Stock Inventory:</span>
+                        <span class="quick-stat-value" id="in-stock-inventory">1</span>
+                    </div>
+                    <div class="quick-stat-row">
+                        <span class="quick-stat-label">Pending Inventory:</span>
+                        <span class="quick-stat-value" id="pending-inventory">0</span>
+                    </div>
+                    <div class="quick-stat-row">
+                        <span class="quick-stat-label">Total Sales This Year:</span>
+                        <span class="quick-stat-value" id="total-sales-year">46 | $508,315</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Volume Chart Card -->
+            <div class="card sales-chart-card">
+                <div class="section-header">
+                    <h2 class="section-title">Monthly Profit Chart</h2>
+                </div>
+                
+                <div class="sales-chart-content">
+                    <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="sales-volume-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Row - Inventory Metrics -->
+        <div class="dashboard-middle-row">
+            <div class="inventory-metrics-grid">
+                <div class="metric-card metric-card--blue">
+                    <div class="metric-icon">
+                        <div class="icon icon--contract"></div>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" id="total-inventory">2</div>
+                        <div class="metric-label">Total Inventory</div>
+                    </div>
+                </div>
+
+                <div class="metric-card metric-card--green">
+                    <div class="metric-icon">
+                        <div class="icon icon--check-mark"></div>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" id="available-inventory">1</div>
+                        <div class="metric-label">Available</div>
+                    </div>
+                </div>
+
+                <div class="metric-card metric-card--purple">
+                    <div class="metric-icon">
+                        <div class="icon icon--payment-fill"></div>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" id="inventory-value">$12,885</div>
+                        <div class="metric-label">Inventory Value</div>
+                    </div>
+                </div>
+
+                <div class="metric-card metric-card--orange">
+                    <div class="metric-icon">
+                        <div class="icon icon--arrow-trend-up"></div>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" id="month-revenue">$9,207.5</div>
+                        <div class="metric-label">Month Profit</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Row - Recent Transactions and Quick Actions -->
+        <div class="dashboard-bottom-row">
+            <!-- Recent Transactions Card -->
+            <div class="card recent-transactions-card">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Transactions</h2>
+                </div>
+                
+                <div class="transactions-list" id="recent-transactions-list">
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-customer">Betty Jean Hayes</div>
+                            <div class="transaction-details">TR002 • 2024-05-28</div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="transaction-total">$8,722</div>
+                            <div class="transaction-fee">Fee: $178</div>
+                        </div>
+                    </div>
+                    
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-customer">Johnson Construction</div>
+                            <div class="transaction-details">SVC-001 • 2024-06-06</div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="transaction-total">$485.5</div>
+                            <div class="transaction-fee">Fee: $0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="card quick-actions-card">
+                <div class="section-header">
+                    <h2 class="section-title">Quick Actions</h2>
+                </div>
+                
+                <div class="quick-actions-list">
+                    <div class="quick-action-item" onclick="DashboardManagement.addCustomer()">
+                        <div class="quick-action-icon">
+                            <div class="icon icon--ai-communications"></div>
+                        </div>
+                        <div class="quick-action-label">Add Customer</div>
+                    </div>
+                    
+                    <div class="quick-action-item" onclick="DashboardManagement.addNewTrailer()">
+                        <div class="quick-action-icon">
+                            <div class="icon icon--plus"></div>
+                        </div>
+                        <div class="quick-action-label">Add New Trailer</div>
+                    </div>
+                    
+                    <div class="quick-action-item" onclick="DashboardManagement.createQuote()">
+                        <div class="quick-action-icon">
+                            <div class="icon icon--reports"></div>
+                        </div>
+                        <div class="quick-action-label">Create Quote</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner"></div>
+</div>

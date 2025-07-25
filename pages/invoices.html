@@ -1,0 +1,247 @@
+<!-- Invoices Management Page -->
+<div class="invoices-management">
+    <!-- Page Header -->
+    <div class="main-header">
+        <div>
+            <h1 class="header-title">Invoices</h1>
+            <p class="header-subtitle">Invoice generation and management</p>
+        </div>
+    </div>
+
+    <!-- Invoice Management Section -->
+    <div class="card">
+        <div class="section-header">
+            <h2 class="section-title">Invoice Management</h2>
+            <div class="section-actions">
+                <button class="btn btn--primary" onclick="InvoicesManagement.openGenerateInvoiceModal()">
+                    <div class="icon icon--payment-fill"></div>
+                    <span>Generate Invoice</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Template Upload Section -->
+    <div class="card">
+        <div class="invoice-template-section">
+            <h3 class="invoice-section-title">Invoice Template</h3>
+            
+            <div class="invoice-template-upload">
+                <div class="upload-area" id="template-upload-area">
+                    <div class="upload-icon">
+                        <div class="icon icon--upload"></div>
+                    </div>
+                    <div class="upload-content">
+                        <h4>Upload your invoice template</h4>
+                        <p>PDF, DOC, or image files up to 10MB</p>
+                        <input type="file" id="template-file-input" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;">
+                        <button class="btn btn--primary" onclick="document.getElementById('template-file-input').click()">
+                            Choose File
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Template Upload Status -->
+                <div class="template-status" id="template-status" style="display: none;">
+                    <div class="template-info">
+                        <div class="icon icon--check-mark"></div>
+                        <div class="template-details">
+                            <span class="template-name" id="template-name">invoice-template.pdf</span>
+                            <span class="template-size" id="template-size">2.5 MB</span>
+                        </div>
+                    </div>
+                    <button class="btn btn--text-danger btn--small" onclick="InvoicesManagement.removeTemplate()">
+                        <div class="icon icon--trash"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Invoices Section -->
+    <div class="card">
+        <div class="section-header">
+            <h2 class="section-title">Recent Invoices</h2>
+            <div class="section-actions">
+                <select id="invoice-filter" class="btn-select" onchange="InvoicesManagement.filterInvoices()">
+                    <option value="">All Invoices</option>
+                    <option value="generated">Generated</option>
+                    <option value="signed">Signed</option>
+                    <option value="sent">Sent</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="invoices-loading" class="loading-state" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Loading invoices...</p>
+        </div>
+
+        <!-- Recent Invoices List -->
+        <div class="recent-invoices-list" id="recent-invoices-list">
+            <!-- Invoices will be populated here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="invoices-empty-state" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">
+                <div class="icon icon--payment-fill"></div>
+            </div>
+            <h3>No Invoices Found</h3>
+            <p>No invoices have been generated yet. Create your first invoice to get started.</p>
+            <button class="btn btn--primary" onclick="InvoicesManagement.openGenerateInvoiceModal()">
+                <div class="icon icon--plus"></div>
+                Generate First Invoice
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Generate Invoice Modal -->
+<div id="generate-invoice-modal" class="modal-overlay">
+    <div class="modal-container modal-container--large">
+        <div class="modal-header">
+            <h3>Generate Invoice</h3>
+            <button class="btn btn--icon" onclick="InvoicesManagement.closeGenerateInvoiceModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="generate-invoice-form">
+                <div class="invoice-form-grid">
+                    <div class="form-section">
+                        <h4>Customer Information</h4>
+                        <div class="form-group">
+                            <label for="invoice-customer">Customer Name *</label>
+                            <input type="text" id="invoice-customer" required placeholder="Enter customer name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="invoice-customer-email">Email Address</label>
+                            <input type="email" id="invoice-customer-email" placeholder="customer@example.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="invoice-customer-address">Address</label>
+                            <textarea id="invoice-customer-address" rows="3" placeholder="Customer address"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h4>Invoice Details</h4>
+                        <div style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="invoice-number">Invoice Number *</label>
+                                <input type="text" id="invoice-number" required placeholder="INV-001">
+                            </div>
+                            
+                            <div class="form-group" style="flex: 1;">
+                                <label for="invoice-date">Invoice Date *</label>
+                                <input type="date" id="invoice-date" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="invoice-due-date">Due Date</label>
+                            <input type="date" id="invoice-due-date">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="invoice-description">Description/Items</label>
+                            <textarea id="invoice-description" rows="4" placeholder="Describe the items or services"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>Amount Details</h4>
+                    <div style="display: flex; gap: 1rem;">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="invoice-subtotal">Subtotal *</label>
+                            <input type="number" id="invoice-subtotal" required placeholder="0.00" step="0.01" min="0" onchange="InvoicesManagement.calculateTotal()">
+                        </div>
+                        
+                        <div class="form-group" style="flex: 1;">
+                            <label for="invoice-tax">Tax (%)</label>
+                            <input type="number" id="invoice-tax" placeholder="0" step="0.01" min="0" max="100" onchange="InvoicesManagement.calculateTotal()">
+                        </div>
+                        
+                        <div class="form-group" style="flex: 1;">
+                            <label for="invoice-total">Total Amount</label>
+                            <input type="number" id="invoice-total" readonly placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="invoice-notes">Additional Notes</label>
+                    <textarea id="invoice-notes" rows="3" placeholder="Payment terms, additional information..."></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="InvoicesManagement.closeGenerateInvoiceModal()">Cancel</button>
+            <button class="btn btn--primary" onclick="InvoicesManagement.generateInvoice()">
+                <div class="icon icon--payment-fill"></div>
+                Generate Invoice
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Invoice Details Modal -->
+<div id="invoice-details-modal" class="modal-overlay">
+    <div class="modal-container modal-container--large">
+        <div class="modal-header">
+            <h3 id="invoice-details-title">Invoice Details</h3>
+            <button class="btn btn--icon" onclick="InvoicesManagement.closeInvoiceDetailsModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="invoice-details-content">
+                <!-- Invoice details will be populated here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="InvoicesManagement.closeInvoiceDetailsModal()">Close</button>
+            <button class="btn btn--outlined" onclick="InvoicesManagement.downloadInvoice()">
+                <div class="icon icon--arrow-down"></div>
+                Download
+            </button>
+            <button class="btn btn--primary" onclick="InvoicesManagement.sendInvoice()">
+                <div class="icon icon--mail"></div>
+                Send Invoice
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Invoice Modal -->
+<div id="delete-invoice-modal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Delete Invoice</h3>
+            <button class="btn btn--icon" onclick="InvoicesManagement.closeDeleteModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this invoice? This action cannot be undone.</p>
+            <div class="invoice-delete-info">
+                <strong>Invoice Details:</strong>
+                <div id="delete-invoice-info" class="text-muted">
+                    <!-- Invoice info will be populated here -->
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="InvoicesManagement.closeDeleteModal()">Cancel</button>
+            <button class="btn btn--danger" onclick="InvoicesManagement.confirmDeleteInvoice()">
+                <div class="icon icon--trash"></div>
+                Delete Invoice
+            </button>
+        </div>
+    </div>
+</div> 

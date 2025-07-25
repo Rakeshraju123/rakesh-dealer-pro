@@ -1,0 +1,349 @@
+<!-- Sales Management Page -->
+<div class="sales-management">
+    <!-- Page Header -->
+    <div class="main-header">
+        <div>
+            <h1 class="header-title">Sales & Deals</h1>
+            <p class="header-subtitle">Track sales and deals</p>
+        </div>
+        <div class="main-header-actions">
+            <button class="btn btn--primary" onclick="SalesManagement.openAddSaleModal()">
+                <div class="icon icon--plus"></div>
+                <span>New Sale</span>
+            </button>
+            <button class="btn btn--outlined" onclick="SalesManagement.exportSales()">
+                <div class="icon icon--upload"></div>
+                <span>Export</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Sales Statistics Cards -->
+    <div class="sales-stats-grid">
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Total Sales</div>
+                <div class="sales-stat-value" id="total-sales-count">0</div>
+            </div>
+            <div class="stat-percentage stat-percentage--neutral" id="total-sales-percentage">
+                <span class="icon icon--arrow-up" id="total-sales-arrow" style="display: none;"></span>
+                <span id="total-sales-percent-text">0%</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Completed Sales</div>
+                <div class="sales-stat-value" id="completed-sales-count">0</div>
+            </div>
+            <div class="stat-percentage stat-percentage--neutral" id="completed-sales-percentage">
+                <span class="icon icon--arrow-up" id="completed-sales-arrow" style="display: none;"></span>
+                <span id="completed-sales-percent-text">0%</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Pending Sales</div>
+                <div class="sales-stat-value" id="pending-sales-count">0</div>
+            </div>
+            <div class="stat-percentage stat-percentage--neutral" id="pending-sales-percentage">
+                <span class="icon icon--arrow-up" id="pending-sales-arrow" style="display: none;"></span>
+                <span id="pending-sales-percent-text">0%</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Total Revenue</div>
+                <div class="sales-stat-value" id="total-revenue-amount">$0</div>
+            </div>
+            <div class="stat-percentage stat-percentage--neutral" id="total-revenue-percentage">
+                <span class="icon icon--arrow-up" id="total-revenue-arrow" style="display: none;"></span>
+                <span id="total-revenue-percent-text">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters Section -->
+    <div class="card">
+        <div class="sales-search-section">
+            <div class="search-controls">
+                <div class="search-bar">
+                    <input type="text" id="sales-search" placeholder="Search by invoice, customer, or salesman..." />
+                    <div class="icon icon--search"></div>
+                </div>
+                
+                <select id="status-filter" class="btn-select">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="partial">Partial</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="refunded">Refunded</option>
+                </select>
+                
+                <select id="salesman-filter" class="btn-select">
+                    <option value="">All Salesmen</option>
+                    <!-- Salesmen options will be populated dynamically -->
+                </select>
+                
+                <button class="btn btn--outlined" onclick="SalesManagement.clearFilters()">
+                    Clear Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Table -->
+    <div class="card">
+        <div class="section-header">
+            <h2 class="section-title">Sales & Deals</h2>
+            <div class="section-actions">
+                <select id="page-size-select" class="btn-select" onchange="SalesManagement.changePageSize()">
+                    <option value="10" selected>10 per page</option>
+                    <option value="25">25 per page</option>
+                    <option value="50">50 per page</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="sales-loading" class="loading-state" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Loading sales data...</p>
+        </div>
+
+        <!-- Sales Table -->
+        <div class="table-container">
+            <table class="table" id="sales-table">
+                <thead>
+                    <tr>
+                        <th onclick="SalesManagement.sortTable('sale_id')">
+                            <div class="table-header-content">
+                                Sale #
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="SalesManagement.sortTable('customer_name')">
+                            <div class="table-header-content">
+                                Customer
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="SalesManagement.sortTable('status')">
+                            <div class="table-header-content">
+                                Status
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="SalesManagement.sortTable('salesman_name')">
+                            <div class="table-header-content">
+                                Salesman
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="SalesManagement.sortTable('item_product')">
+                            <div class="table-header-content">
+                                Item
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="SalesManagement.sortTable('total_amount')">
+                            <div class="table-header-content">
+                                Total
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="SalesManagement.sortTable('balance')">
+                            <div class="table-header-content">
+                                Balance
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="sales-table-body">
+                    <!-- Sales data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div id="sales-empty-state" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">
+                <div class="icon icon--payment"></div>
+            </div>
+            <h3>No Sales Found</h3>
+            <p>No sales match your current search criteria. Try adjusting your filters or create a new sale.</p>
+            <button class="btn btn--primary" onclick="SalesManagement.openAddSaleModal()">
+                <div class="icon icon--plus"></div>
+                Create New Sale
+            </button>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container" id="sales-pagination">
+            <div class="pagination-info">
+                <span id="pagination-info-text">Showing 0 of 0 sales</span>
+            </div>
+            <div class="pagination-controls">
+                <button class="btn btn--outlined btn--small" id="prev-page-btn" onclick="SalesManagement.previousPage()" disabled>
+                    <div class="icon icon--chevron-left"></div>
+                    Previous
+                </button>
+                <div class="pagination-numbers" id="pagination-numbers">
+                    <!-- Page numbers will be populated here -->
+                </div>
+                <button class="btn btn--outlined btn--small" id="next-page-btn" onclick="SalesManagement.nextPage()" disabled>
+                    Next
+                    <div class="icon icon--chevron-down" style="transform: rotate(-90deg);"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Sale Modal -->
+<div id="sale-modal" class="modal-overlay">
+    <div class="modal-container modal-container--medium">
+        <div class="modal-header">
+            <h3 id="sale-modal-title">Add New Sale</h3>
+            <button class="btn btn--icon" onclick="SalesManagement.closeSaleModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="sale-form" class="form-two-columns">
+                <div class="form-group">
+                    <label for="sale-customer">Customer *</label>
+                    <input type="text" id="sale-customer" required placeholder="Enter customer name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sale-phone">Phone Number</label>
+                    <input type="tel" id="sale-phone" placeholder="Enter phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sale-item">Item/Product *</label>
+                    <input type="text" id="sale-item" required placeholder="Enter item description">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sale-salesman">Salesman</label>
+                    <select id="sale-salesman">
+                        <option value="">Select Salesman</option>
+                        <!-- Salesmen options will be populated dynamically -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sale-total">Total Amount *</label>
+                    <input type="number" id="sale-total" required placeholder="0.00" step="0.01" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sale-balance">Balance</label>
+                    <input type="number" id="sale-balance" placeholder="0.00" step="0.01" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sale-status">Status</label>
+                    <select id="sale-status">
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="partial">Partial</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="refunded">Refunded</option>
+                    </select>
+                </div>
+                
+                <div class="form-group form-full-width">
+                    <label for="sale-notes">Notes</label>
+                    <textarea id="sale-notes" rows="3" placeholder="Additional notes..."></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="SalesManagement.closeSaleModal()">Cancel</button>
+            <button class="btn btn--primary" onclick="SalesManagement.saveSale()">
+                <span id="save-sale-btn-text">Save Sale</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Sale Details Modal -->
+<div id="sale-details-modal" class="modal-overlay">
+    <div class="modal-container modal-container--large">
+        <div class="modal-header">
+            <h3 id="sale-details-title">Sale Details</h3>
+            <button class="btn btn--icon" onclick="SalesManagement.closeSaleDetailsModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="sale-details-content">
+                <!-- Sale details will be populated here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="SalesManagement.closeSaleDetailsModal()">Close</button>
+            <button class="btn btn--primary" onclick="SalesManagement.printSaleDetails()">
+                <div class="icon icon--chart-bar"></div>
+                Print Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-sale-modal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Delete Sale</h3>
+            <button class="btn btn--icon" onclick="SalesManagement.closeDeleteModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this sale? This action cannot be undone.</p>
+            <div class="sale-delete-info">
+                <strong>Sale Details:</strong>
+                <div id="delete-sale-info" class="text-muted">
+                    <!-- Sale info will be populated here -->
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="SalesManagement.closeDeleteModal()">Cancel</button>
+            <button class="btn btn--danger" onclick="SalesManagement.confirmDeleteSale()">
+                <div class="icon icon--trash"></div>
+                Delete Sale
+            </button>
+        </div>
+    </div>
+</div> 

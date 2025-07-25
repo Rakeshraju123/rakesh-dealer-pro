@@ -1,0 +1,10 @@
+*.log
+*.tmp
+.DS_Store
+node_modules/
+vendor/
+cookies.txt
+*.rpm
+.env
+.env.*
+*.backup

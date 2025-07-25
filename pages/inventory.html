@@ -1,0 +1,506 @@
+<!-- Inventory Management Content -->
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="loading-overlay">
+    <div>
+        <div class="loading-spinner"></div>
+    </div>
+</div>
+
+<!-- Inventory Management Page -->
+<div class="inventory-management">
+    <!-- Page Header -->
+    <div class="main-header">
+        <div>
+            <h1 class="header-title">Inventory Management</h1>
+            <p class="header-subtitle">Track and manage trailer inventory</p>
+        </div>
+        <div class="main-header-actions">
+            <button class="btn btn--primary" onclick="InventoryManagement.showNewInventoryModal()">
+                <div class="icon icon--plus"></div>
+                <span>Add Trailer</span>
+            </button>
+            <button class="btn btn--outlined" onclick="InventoryManagement.exportInventory()">
+                <div class="icon icon--upload"></div>
+                <span>Export</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="inventory-stats-grid">
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Total Trailers</div>
+                <div class="inventory-stat-value" id="total-trailers">0</div>
+            </div>
+            <div class="stat-percentage stat-percentage--neutral" id="total-trailers-percentage">
+                <span class="icon icon--arrow-up" id="total-trailers-arrow" style="display: none;"></span>
+                <span id="total-trailers-percent-text">0%</span>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Available</div>
+                <div class="inventory-stat-value" id="available-trailers">0</div>
+            </div>
+            <div class="stat-percentage stat-percentage--positive" id="available-trailers-percentage">
+                <span class="icon icon--arrow-up" id="available-trailers-arrow"></span>
+                <span id="available-trailers-percent-text">0%</span>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Total Value</div>
+                <div class="inventory-stat-value" id="total-value">$0</div>
+            </div>
+            <div class="stat-percentage stat-percentage--positive" id="total-value-percentage">
+                <span class="icon icon--arrow-up" id="total-value-arrow"></span>
+                <span id="total-value-percent-text">0%</span>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-label">Monthly Profit</div>
+                <div class="inventory-stat-value" id="monthly-profit">$0</div>
+            </div>
+            <div class="stat-percentage stat-percentage--neutral" id="monthly-profit-percentage">
+                <span class="icon icon--arrow-up" id="monthly-profit-arrow" style="display: none;"></span>
+                <span id="monthly-profit-percent-text">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters Section -->
+    <div class="card">
+        <div class="inventory-search-section">
+            <div class="search-controls">
+                <div class="search-bar">
+                    <input type="text" id="inventory-search" placeholder="Search by Stock #, Inventory ID, manufacturer, model, or type..." />
+                    <div class="icon icon--search"></div>
+                </div>
+                
+                <select id="status-filter" class="btn-select">
+                    <option value="">All Status</option>
+                    <option value="available">Available</option>
+                    <option value="sold">Sold</option>
+                    <option value="reserved">Reserved</option>
+                    <option value="maintenance">Maintenance</option>
+                </select>
+                
+                <select id="type-filter" class="btn-select">
+                    <option value="">All Types</option>
+                    <option value="Utility Trailer">Utility Trailer</option>
+                    <option value="Dump Trailer">Dump Trailer</option>
+                    <option value="Enclosed Trailer">Enclosed Trailer</option>
+                    <option value="Flatbed Trailer">Flatbed Trailer</option>
+                    <option value="Car Hauler">Car Hauler</option>
+                    <option value="Equipment Trailer">Equipment Trailer</option>
+                </select>
+                
+                <button class="btn btn--outlined" onclick="InventoryManagement.clearFilters()">
+                    Clear Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="card">
+        <div class="section-header">
+            <h2 class="section-title">All Trailers</h2>
+            <div class="section-actions">
+                <select id="page-size-select" class="btn-select" onchange="InventoryManagement.changePageSize()">
+                    <option value="10" selected>10 per page</option>
+                    <option value="15">15 per page</option>
+                    <option value="25">25 per page</option>
+                    <option value="50">50 per page</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="inventory-loading" class="loading-state" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Loading inventory data...</p>
+        </div>
+
+        <!-- Inventory Table -->
+        <div class="table-container">
+            <table class="table" id="inventory-table">
+                <thead>
+                    <tr>
+                        <th onclick="InventoryManagement.sortTable('id')">
+                            <div class="table-header-content">
+                                Inventory ID
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="InventoryManagement.sortTable('stock_id')">
+                            <div class="table-header-content">
+                                Stock #
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="InventoryManagement.sortTable('manufacturer')">
+                            <div class="table-header-content">
+                                Trailer Details
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="InventoryManagement.sortTable('year')">
+                            <div class="table-header-content">
+                                Year
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="InventoryManagement.sortTable('status')">
+                            <div class="table-header-content">
+                                Status
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="InventoryManagement.sortTable('cost_price')">
+                            <div class="table-header-content">
+                                Cost
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="InventoryManagement.sortTable('selling_price')">
+                            <div class="table-header-content">
+                                Price
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="InventoryManagement.sortTable('profit_amount')">
+                            <div class="table-header-content">
+                                Profit
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th onclick="InventoryManagement.sortTable('date_added')">
+                            <div class="table-header-content">
+                                Date Added
+                                <div class="sort-arrows">
+                                    <div class="icon icon--arrow-up sort-arrow-up"></div>
+                                    <div class="icon icon--arrow-down sort-arrow-down"></div>
+                                </div>
+                            </div>
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-table-body">
+                    <!-- Inventory data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div id="inventory-empty-state" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">
+                <div class="icon icon--truck"></div>
+            </div>
+            <h3>No Trailers Found</h3>
+            <p>No trailers match your current search criteria. Try adjusting your filters or add a new trailer.</p>
+            <button class="btn btn--primary" onclick="InventoryManagement.showNewInventoryModal()">
+                <div class="icon icon--plus"></div>
+                Add New Trailer
+            </button>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container" id="inventory-pagination">
+            <div class="pagination-info">
+                <span id="pagination-info-text">Showing 0 of 0 trailers</span>
+            </div>
+            <div class="pagination-controls">
+                <button class="btn btn--outlined btn--small" id="prev-page-btn" onclick="InventoryManagement.previousPage()" disabled>
+                    <div class="icon icon--chevron-left"></div>
+                    Previous
+                </button>
+                <div class="pagination-numbers" id="pagination-numbers">
+                    <!-- Page numbers will be populated here -->
+                </div>
+                <button class="btn btn--outlined btn--small" id="next-page-btn" onclick="InventoryManagement.nextPage()" disabled>
+                    Next
+                    <div class="icon icon--chevron-down" style="transform: rotate(-90deg);"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Inventory Modal -->
+<div id="inventoryModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="inventoryModalTitle">Add New Trailer</h2>
+            <button class="modal-close" onclick="InventoryManagement.closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="inventoryForm" onsubmit="InventoryManagement.handleSubmit(event)">
+                <input type="hidden" id="trailer_id" name="trailer_id">
+                
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="stock_id">Stock # (Optional)</label>
+                            <input type="text" id="stock_id" name="stock_id" placeholder="Enter stock number if available">
+                        </div>
+                        <div class="form-group">
+                            <label for="manufacturer">Manufacturer *</label>
+                            <input type="text" id="manufacturer" name="manufacturer" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="model">Model *</label>
+                            <input type="text" id="model" name="model" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="year">Year *</label>
+                            <input type="number" id="year" name="year" min="1990" max="2030" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Category *</label>
+                            <input type="text" id="category" name="category" required placeholder="e.g., Utility Trailer, Dump Trailer, Enclosed Trailer">
+                        </div>
+                        <div class="form-group">
+                            <label for="condition">Condition *</label>
+                            <select id="condition" name="condition" required>
+                                <option value="">Select condition</option>
+                                <option value="new">New</option>
+                                <option value="used">Used</option>
+                                <option value="refurbished">Refurbished</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="color">Color</label>
+                            <input type="text" id="color" name="color" placeholder="e.g., Red, Blue, White">
+                        </div>
+                        <div class="form-group">
+                            <label for="size">Size</label>
+                            <input type="text" id="size" name="size" placeholder="e.g., 6x12, 8.5x20">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Pricing Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cost_price">Cost Price *</label>
+                            <input type="number" id="cost_price" name="cost_price" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="selling_price">Selling Price *</label>
+                            <input type="number" id="selling_price" name="selling_price" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profit_amount">Profit Amount</label>
+                            <input type="text" id="profit_amount" name="profit_amount" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="profit_percentage">Profit Percentage</label>
+                            <input type="text" id="profit_percentage" name="profit_percentage" readonly>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Status & Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="status">Status *</label>
+                            <select id="status" name="status" required>
+                                <option value="available">Available</option>
+                                <option value="sold">Sold</option>
+                                <option value="reserved">Reserved</option>
+                                <option value="maintenance">Maintenance</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_added">Date Added *</label>
+                            <input type="date" id="date_added" name="date_added" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="3" placeholder="Additional details about the trailer"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn--outlined" onclick="InventoryManagement.closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn--primary">Save Trailer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Trailer Details Modal -->
+<div id="viewTrailerModal" class="modal-overlay">
+    <div class="modal-container modal-container--large">
+        <div class="modal-header">
+            <h3 id="viewTrailerModalTitle">Trailer Details</h3>
+            <button class="btn btn--icon" onclick="InventoryManagement.closeViewModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="trailer-details-content">
+                <!-- Trailer details will be populated here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="InventoryManagement.closeViewModal()">Close</button>
+            <button class="btn btn--primary" onclick="InventoryManagement.editItem(window.currentViewingItem?.id)">
+                <div class="icon icon--pen-to-square"></div>
+                Edit Trailer
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Process Payment Modal -->
+<div id="process-payment-modal" class="modal-overlay">
+    <div class="modal-container modal-container--medium">
+        <div class="modal-header">
+            <h3>Process Payment</h3>
+            <button class="btn btn--icon" onclick="InventoryManagement.closeProcessPaymentModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Trailer Information -->
+            <div id="payment-trailer-info" class="payment-trailer-section">
+                <!-- Trailer details will be populated here -->
+            </div>
+
+            <!-- Customer Selection -->
+            <div class="form-section">
+                <h4>Customer Information</h4>
+                <div class="form-group">
+                    <label for="payment-customer-select">Select Customer *</label>
+                    <select id="payment-customer-select" class="form-control" required>
+                        <option value="">Select customer...</option>
+                        <option value="1">John Smith - (555) 123-4567</option>
+                        <option value="2">Sarah Johnson - (555) 987-6543</option>
+                        <option value="3">Mike Davis - (555) 456-7890</option>
+                        <option value="4">Lisa Wilson - (555) 321-0987</option>
+                        <option value="5">Robert Brown - (555) 654-3210</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="form-section">
+                <h4>Payment Method</h4>
+                <div class="form-group">
+                    <label for="payment-method-select">Payment Method *</label>
+                    <select id="payment-method-select" class="form-control" required>
+                        <option value="credit_card">Credit Card</option>
+                        <option value="debit_card">Debit Card</option>
+                        <option value="cash">Cash</option>
+                        <option value="check">Check</option>
+                        <option value="financing">Financing</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Payment Summary -->
+            <div class="payment-summary">
+                <h4>Payment Summary</h4>
+                <div class="payment-breakdown">
+                    <div class="payment-line">
+                        <span class="payment-label">Sale Amount:</span>
+                        <span id="payment-sale-amount" class="payment-amount">$0</span>
+                    </div>
+                    <div class="payment-line">
+                        <span class="payment-label">Processing Fee (2%):</span>
+                        <span id="payment-processing-fee" class="payment-amount text-warning">-$0</span>
+                    </div>
+                    <div class="payment-line payment-total">
+                        <span class="payment-label"><strong>Net Amount:</strong></span>
+                        <span id="payment-net-amount" class="payment-amount text-success"><strong>$0</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="InventoryManagement.closeProcessPaymentModal()">Cancel</button>
+            <button class="btn btn--primary" onclick="InventoryManagement.processPayment()">
+                <div class="icon icon--payment"></div>
+                Process Payment
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-trailer-modal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Delete Trailer</h3>
+            <button class="btn btn--icon" onclick="InventoryManagement.closeDeleteModal()">
+                <div class="icon icon--close"></div>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this trailer? This action cannot be undone.</p>
+            <div class="trailer-delete-info">
+                <strong>Trailer Details:</strong>
+                <div id="delete-trailer-info" class="text-muted">
+                    <!-- Trailer info will be populated here -->
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="InventoryManagement.closeDeleteModal()">Cancel</button>
+            <button class="btn btn--danger" onclick="InventoryManagement.confirmDeleteTrailer()">
+                <div class="icon icon--trash"></div>
+                Delete Trailer
+            </button>
+        </div>
+    </div>
+</div>

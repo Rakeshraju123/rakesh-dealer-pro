@@ -1,0 +1,14 @@
+{
+    "selectors": {
+        "container": ".item-wrapper",
+        "title": ".item-info .item-title .label",
+        "image": ".item-img img[src]",
+        "price": ".item-info .price span:last-child",
+        "link": ".item-link[href]",
+        "description": ".item-specs .specs-first div span:nth-child(2)",
+        "stock": ".item-stock .stock span:last-child"
+    },
+    "domain": "www.trailertown.com",
+    "created_at": "2025-07-21 07:59:43",
+    "sample_url": "https:\/\/www.trailertown.com\/all-inventory\/"
+}

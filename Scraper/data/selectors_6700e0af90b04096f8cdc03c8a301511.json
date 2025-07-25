@@ -1,0 +1,11 @@
+{
+    "selectors": {
+        "container": ".collection__products .product-card",
+        "title": ".product-card__title",
+        "image": ".product-card__image img[src]",
+        "price": ".product-card__price",
+        "link": ".product-card__link",
+        "description": ".product-card__description",
+        "stock": ".product-card__stock-number"
+    }
+}

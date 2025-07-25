@@ -1,0 +1,11 @@
+{
+    "selectors": {
+        "container": ".item-wrapper",
+        "title": ".item-title .label",
+        "image": ".item-img img",
+        "price": ".price span:last-child",
+        "link": ".item-link",
+        "description": ".item-title .prefix",
+        "stock": ".item-stock .stock span:last-child"
+    }
+}
